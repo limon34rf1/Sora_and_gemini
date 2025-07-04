@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Генерация изображения</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; text-align: center; }
+    #query { width: 60%; padding: 0.5rem; font-size: 1rem; }
+    #submit-btn { padding: 0.5rem 1rem; font-size: 1rem; }
+    #result-img { display: block; margin-top: 2rem; max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <h1>Генерация изображения по запросу</h1>
+  <input type="text" id="query" placeholder="Введите текст запроса..." />
+  <button id="submit-btn">Сгенерировать</button>
+  <div id="result">
+    <img id="result-img" src="" alt="Тут появится изображение" />
+  </div>
+  <script>
+    const queryInput = document.getElementById('query');
+    const resultImg = document.getElementById('result-img');
+    const submitBtn = document.getElementById('submit-btn');
+
+    submitBtn.addEventListener('click', async () => {
+      const queryText = queryInput.value.trim();
+      if (!queryText) { alert("Введите запрос!"); return; }
+      const apiUrl = `/api/generate?query=${encodeURIComponent(queryText)}`;
+      try {
+        const resp = await fetch(apiUrl);
+        const data = await resp.json();
+        if (data.image_url) {
+          resultImg.src = data.image_url;
+        } else {
+          alert(data.error || 'Ошибка при генерации');
+        }
+      } catch (err) {
+        alert("Ошибка запроса: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
